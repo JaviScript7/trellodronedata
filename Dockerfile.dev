@@ -1,0 +1,35 @@
+#Esto es un dockefile para entorno de desarrollo y pruebas
+
+#Primero vamos a indicar la imagen y la version correspondiente
+
+FROM python:3.10
+
+#Indicamos quien es el responsable de mantener el contenedor
+LABEL Maintainer="JaviScript"
+
+#Creamos el directorio de la aplicacion
+RUN mkdir -p /home/app/
+
+#Instalacion de paquetes necesarios para correr Streamlit
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    nano \
+    software-properties-common \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+#Modificaremos el bash -> Esto es mas por gusto personal
+RUN rm /root/.bashrc
+COPY .bashrc /root
+
+#Copiamos los archivos de la aplicacion
+COPY . /home/app
+
+#Establecemos nuestro entorno de trabajo
+WORKDIR /home/app
+
+#Instalamos las dependencias necesaroas de python 
+RUN pip install --no-cache-dir -r /home/app/requirements.txt
+
+CMD [ "bash" ]
